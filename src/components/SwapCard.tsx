@@ -134,7 +134,7 @@ export function SwapCard() {
           >
             <option value={COOK_MINT}>{COOK}</option>
             {tokenOptions
-              .filter((t) => t.mint !== inputMint && t.mint !== COOK_MINT)
+.filter((t) => t.mint !== outputMint && t.mint !== COOK_MINT)
               .map((t) => (
                 <option key={t.mint} value={t.mint}>
                   {t.symbol}
@@ -160,7 +160,7 @@ export function SwapCard() {
           >
             <option value="">Select token</option>
             {tokenOptions
-              .filter((t) => t.mint !== outputMint && t.mint !== inputMint)
+.filter((t) => t.mint !== inputMint)
               .map((t) => (
                 <option key={t.mint} value={t.mint}>
                   {t.symbol}
