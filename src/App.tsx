@@ -13,7 +13,7 @@ function App() {
   return (
     <div className="min-h-screen bg-neutral-950 text-neutral-100 p-6">
       <header className="flex items-center justify-between max-w-5xl mx-auto mb-10">
-        <h1 className="text-2xl font-bold tracking-tight">🍪 Cookie Portfolio & Swap Dashboard</h1>
+<h1 className="text-2xl font-bold tracking-tight">🍪 Doughboard</h1>
         <WalletButton />
       </header>
 
