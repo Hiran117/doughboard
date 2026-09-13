@@ -131,7 +131,7 @@ export function SwapCard({ initialOutputMint = '' }: { initialOutputMint?: strin
             <select
               value={inputMint}
               onChange={(e) => setInputMint(e.target.value)}
-              className="rounded-xl border border-amber-400/30 bg-amber-400/10 px-3 py-1.5 text-sm text-amber-200 shrink-0 outline-none transition hover:border-amber-400/60"
+className="rounded-xl border border-amber-400/40 bg-dough-surface px-3 py-1.5 text-sm text-amber-200 shrink-0 outline-none transition hover:border-amber-400/70"
             >
               <option value={COOK_MINT}>{COOK}</option>
               {tokenOptions
@@ -154,7 +154,7 @@ export function SwapCard({ initialOutputMint = '' }: { initialOutputMint?: strin
             <select
               value={outputMint}
               onChange={(e) => setOutputMint(e.target.value)}
-              className="rounded-xl border border-amber-400/30 bg-amber-400/10 px-3 py-1.5 text-sm text-amber-200 shrink-0 outline-none transition hover:border-amber-400/60"
+className="rounded-xl border border-amber-400/40 bg-dough-surface px-3 py-1.5 text-sm text-amber-200 shrink-0 outline-none transition hover:border-amber-400/70"
             >
               <option value="">Select token</option>
               {tokenOptions

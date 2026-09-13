@@ -35,3 +35,8 @@ body {
 input::placeholder {
   color: rgba(166, 148, 126, 0.55);
 }
+
+select option {
+  background-color: #1f1813;
+  color: #f5f0e8;
+}
