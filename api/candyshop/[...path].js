@@ -1,3 +1,6 @@
+// Vercel serverless proxy: browser calls same-origin /api/candyshop/*, this forwards to
+// swap.cookiescan.io server-to-server (no CORS applies to server-to-server calls), avoiding
+// the browser CORS block on direct calls to swap.cookiescan.io from another origin.
 export default async function handler(req, res) {
   const { path = [] } = req.query
   const upstreamPath = Array.isArray(path) ? path.join('/') : path

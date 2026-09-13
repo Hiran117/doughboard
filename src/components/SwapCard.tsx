@@ -21,7 +21,7 @@ export function SwapCard({ initialOutputMint = '' }: { initialOutputMint?: strin
 
   const [registry, setRegistry] = useState<Map<string, TokenInfo> | null>(null)
   const [inputMint, setInputMint] = useState(COOK_MINT)
-const [outputMint, setOutputMint] = useState(initialOutputMint)
+  const [outputMint, setOutputMint] = useState(initialOutputMint)
   const [amount, setAmount] = useState('')
   const [slippageBps, setSlippageBps] = useState(DEFAULT_SLIPPAGE_BPS)
 
@@ -134,7 +134,7 @@ const [outputMint, setOutputMint] = useState(initialOutputMint)
           >
             <option value={COOK_MINT}>{COOK}</option>
             {tokenOptions
-.filter((t) => t.mint !== outputMint && t.mint !== COOK_MINT)
+              .filter((t) => t.mint !== outputMint && t.mint !== COOK_MINT)
               .map((t) => (
                 <option key={t.mint} value={t.mint}>
                   {t.symbol}
@@ -160,7 +160,7 @@ const [outputMint, setOutputMint] = useState(initialOutputMint)
           >
             <option value="">Select token</option>
             {tokenOptions
-.filter((t) => t.mint !== inputMint)
+              .filter((t) => t.mint !== inputMint)
               .map((t) => (
                 <option key={t.mint} value={t.mint}>
                   {t.symbol}

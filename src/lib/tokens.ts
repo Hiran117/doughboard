@@ -34,6 +34,8 @@ const num = (v: unknown): number | undefined =>
 
 const CID_RE = /^(Qm[1-9A-HJ-NP-Za-km-z]{44}|bafy[a-z0-9]+)(\/.*)?$/
 
+/** The registry sometimes gives a bare IPFS CID or an ipfs:// URI instead of an http(s) URL —
+ * neither loads directly as an <img src>, so route both through a public gateway. */
 function resolveLogo(uri: string | undefined): string | undefined {
   if (!uri) return undefined
   if (uri.startsWith('http://') || uri.startsWith('https://')) return uri
