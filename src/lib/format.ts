@@ -13,8 +13,15 @@ export function fmtAmount(raw: bigint, decimals: number, compact = false): strin
 
   let out: string
   if (compact) {
-    const asNumber = Number(whole) + Number(frac) / Number(divisor)
-    out = asNumber >= 1000 ? asNumber.toLocaleString(undefined, { maximumFractionDigits: 2 }) : asNumber.toLocaleString(undefined, { maximumFractionDigits: 4 })
+    if (whole >= 1000n) {
+      // Large values: format the exact integer part via BigInt, no sub-unit precision.
+      // Converting straight to Number here would silently lose precision once the raw
+      // amount exceeds Number.MAX_SAFE_INTEGER — routine for high-supply meme tokens.
+      out = whole.toLocaleString()
+    } else {
+      const asNumber = Number(whole) + Number(frac) / Number(divisor)
+      out = asNumber.toLocaleString(undefined, { maximumFractionDigits: 4 })
+    }
   } else {
     const fracStr = frac.toString().padStart(decimals, '0').replace(/0+$/, '')
     out = fracStr ? `${whole}.${fracStr}` : whole.toString()
@@ -30,7 +37,8 @@ export function fmtUsd(value: number | undefined): string {
 /** Parse a UI amount string (what a person types, e.g. "1.5") into a raw integer amount string. */
 export function uiToRaw(ui: string, decimals: number): string {
   const trimmed = ui.trim()
-  if (!trimmed || Number.isNaN(Number(trimmed))) throw new Error('invalid amount')
+  if (!/^\d*\.?\d*$/.test(trimmed) || trimmed === '' || trimmed === '.') throw new Error('invalid amount')
+  if (Number(trimmed) <= 0) throw new Error('amount must be greater than zero')
   const [whole, frac = ''] = trimmed.split('.')
   if (frac.length > decimals) throw new Error(`too many decimal places (max ${decimals})`)
   const paddedFrac = frac.padEnd(decimals, '0')

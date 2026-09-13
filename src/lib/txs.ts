@@ -31,7 +31,7 @@ const SIGN_TIMEOUT_MS = 120_000
 export const WRONG_NETWORK_HINT =
   'The wallet did not return a signature. Make sure it is on Cookie Chain: in Nightly, open the network switcher and pick Cookie, then try again.'
 
-function withTimeout<T>(p: Promise<T>, ms: number, message: string): Promise<T> {
+export function withTimeout<T>(p: Promise<T>, ms: number, message: string): Promise<T> {
   return new Promise<T>((resolve, reject) => {
     const t = setTimeout(() => reject(new Error(message)), ms)
     p.then(

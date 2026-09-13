@@ -1,7 +1,7 @@
 # 🍪 Doughboard
 
 Your dough, tracked and traded on Cookie Chain. A wallet-connected dashboard for
-viewing your live portfolio and swapping tokens through the Candy Shop
+viewing your live portfolio and swapping tokens through the Cookiebox
 aggregator — built for the ["Create an App on Cookie Chain"](https://superteam.fun/earn/listing/create-an-app-on-cookie-chain-app/)
 bounty on Superteam Earn.
 
@@ -9,9 +9,11 @@ bounty on Superteam Earn.
 
 - **Wallet connect** — Nightly and any Solana Wallet Standard wallet, auto-detected
 - **Live portfolio** — native COOK + every SPL/Token-2022 balance, priced via the
-  Cookiescan token registry, with a running USD total
+  Cookiescan token registry, with a running USD total. View any wallet read-only
+  by pasting an address or via a `?a=<address>` shareable link — no wallet
+  connection required to look
 - **Swap** — live quotes, price impact, minimum received, and route breakdown via
-  the Candy Shop aggregator (`swap.cookiescan.io`), which routes across all
+  the Cookiebox aggregator (`agg.cookiebox.app`), which routes across all
   Cookie Chain DEX liquidity
 - **Transaction feedback** — full stage tracking (quoting → building → signing →
   submitting → confirming), pre-sign simulation, human-readable errors, and a
@@ -53,7 +55,7 @@ src/
     tokens.ts        # Cookiescan token registry (prices, metadata)
     portfolio.ts      # live wallet balance + valuation hook
     txs.ts             # generic tx send/confirm with the Nightly-timeout guard
-    swap.ts             # Candy Shop aggregator client + swap flow
+    swap.ts             # Cookiebox aggregator client + swap flow
   components/
     WalletButton.tsx     # custom connect UI (Wallet Standard, Nightly-first)
     SwapCard.tsx           # token picker, live quote, swap execution

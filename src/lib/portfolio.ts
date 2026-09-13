@@ -45,10 +45,21 @@ async function fetchSplBalances(connection: Connection, owner: PublicKey) {
   return byMint
 }
 
+/** Bigint -> approximate human number, precision-safe: dividing out the decimals via BigInt
+ * first keeps the whole-token count (rather than the raw base-unit count) as what gets cast
+ * to Number — the raw count routinely exceeds Number.MAX_SAFE_INTEGER once decimals are
+ * applied, even for ordinary holdings; the whole-token count essentially never does. */
+function toApproxNumber(amount: bigint, decimals: number): number {
+  const divisor = 10n ** BigInt(decimals)
+  const whole = amount / divisor
+  const frac = amount % divisor
+  return Number(whole) + Number(frac) / Number(divisor)
+}
+
 function toRow(mint: string, amount: bigint, decimals: number, registry: Map<string, TokenInfo>, isNative: boolean): PortfolioRow {
   const meta = registry.get(mint)
   const priceUsd = meta?.priceUsd
-  const humanAmount = Number(amount) / 10 ** decimals
+  const humanAmount = toApproxNumber(amount, decimals)
   return {
     mint,
     symbol: meta?.symbol || (isNative ? COOK : `${mint.slice(0, 4)}…`),

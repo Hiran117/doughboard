@@ -3,16 +3,16 @@ import { useConnection, useWallet } from '@solana/wallet-adapter-react'
 import { COOK, COOK_DECIMALS, COOK_MINT, txUrl } from '../lib/chain'
 import { loadRegistry, type TokenInfo } from '../lib/tokens'
 import { rawToUi, uiToRaw } from '../lib/format'
-import { runSwap, quoteMultiRoute, DEFAULT_SLIPPAGE_BPS, type MultiRoute, type SwapStage } from '../lib/swap'
+import { runSwap, fetchQuote, DEFAULT_SLIPPAGE_BPS, type Route } from '../lib/swap'
+import type { TxStatus } from '../lib/txs'
 
-const STAGE_LABEL: Record<SwapStage, string> = {
-  quoting: 'Getting quote…',
-  building: 'Building transaction…',
+type Stage = TxStatus | 'building'
+
+const STAGE_LABEL: Partial<Record<Stage, string>> = {
+  building: 'Getting quote…',
   signing: 'Waiting for signature…',
-  submitting: 'Submitting…',
+  sending: 'Sending…',
   confirming: 'Confirming…',
-  confirmed: 'Confirmed',
-  failed: 'Failed',
 }
 
 export function SwapCard({ initialOutputMint = '' }: { initialOutputMint?: string }) {
@@ -25,12 +25,12 @@ export function SwapCard({ initialOutputMint = '' }: { initialOutputMint?: strin
   const [amount, setAmount] = useState('')
   const [slippageBps, setSlippageBps] = useState(DEFAULT_SLIPPAGE_BPS)
 
-  const [route, setRoute] = useState<MultiRoute | null>(null)
+  const [route, setRoute] = useState<Route | null>(null)
   const [quoting, setQuoting] = useState(false)
   const [quoteError, setQuoteError] = useState<string | null>(null)
 
-  const [stage, setStage] = useState<SwapStage | null>(null)
-  const [result, setResult] = useState<{ signature: string; confirmed: boolean } | null>(null)
+  const [stage, setStage] = useState<Stage | null>(null)
+  const [result, setResult] = useState<{ signature: string } | null>(null)
   const [swapError, setSwapError] = useState<string | null>(null)
 
   useEffect(() => {
@@ -42,6 +42,7 @@ export function SwapCard({ initialOutputMint = '' }: { initialOutputMint?: strin
   const inputToken = registry?.get(inputMint)
   const outputToken = outputMint ? registry?.get(outputMint) : undefined
   const inputDecimals = inputToken?.decimals ?? COOK_DECIMALS
+  const outDecimals = outputToken?.decimals ?? 9
 
   const tokenOptions = useMemo(() => (registry ? [...registry.values()].filter((t) => t.symbol) : []), [registry])
 
@@ -63,7 +64,7 @@ export function SwapCard({ initialOutputMint = '' }: { initialOutputMint?: strin
         }
         return
       }
-      quoteMultiRoute(inputMint, outputMint, amountRaw, slippageBps)
+      fetchQuote(inputMint, outputMint, amountRaw, slippageBps, publicKey?.toBase58())
         .then((r) => !stop && setRoute(r))
         .catch((e) => !stop && setQuoteError(e instanceof Error ? e.message : String(e)))
         .finally(() => !stop && setQuoting(false))
@@ -72,7 +73,7 @@ export function SwapCard({ initialOutputMint = '' }: { initialOutputMint?: strin
       stop = true
       clearTimeout(t)
     }
-  }, [inputMint, outputMint, amount, slippageBps, inputDecimals])
+  }, [inputMint, outputMint, amount, slippageBps, inputDecimals, publicKey])
 
   async function handleSwap() {
     if (!publicKey || !signTransaction || !route) return
@@ -90,6 +91,7 @@ export function SwapCard({ initialOutputMint = '' }: { initialOutputMint?: strin
         onStage: setStage,
       })
       setResult(res)
+      setAmount('')
     } catch (e) {
       setSwapError(e instanceof Error ? e.message : String(e))
     } finally {
@@ -97,18 +99,16 @@ export function SwapCard({ initialOutputMint = '' }: { initialOutputMint?: strin
     }
   }
 
-  const outDecimals = outputToken?.decimals ?? 9
-  const expectedOut = route ? rawToUi(route.grossOutAmount ?? route.totalOutAmount, outDecimals) : null
+  const expectedOut = route ? rawToUi(route.netOutAmount, outDecimals) : null
   const minOut = route ? rawToUi(route.minOutAmount, outDecimals) : null
 
   return (
-    <section className="rounded-xl border border-neutral-800 p-6 bg-neutral-900 space-y-4">
-      <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold">Swap</h2>
+    <div className="space-y-4">
+      <div className="flex items-center justify-end">
         <select
           value={slippageBps}
           onChange={(e) => setSlippageBps(Number(e.target.value))}
-          className="bg-neutral-800 border border-neutral-700 rounded text-xs px-2 py-1"
+          className="bg-neutral-900 border border-neutral-800 rounded-lg text-xs px-2 py-1.5"
         >
           <option value={50}>0.5% slippage</option>
           <option value={100}>1% slippage</option>
@@ -116,67 +116,64 @@ export function SwapCard({ initialOutputMint = '' }: { initialOutputMint?: strin
         </select>
       </div>
 
-      <div className="space-y-2">
-        <label className="block text-xs text-neutral-500">You pay</label>
-        <div className="flex gap-2">
-          <input
-            type="number"
-            min="0"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            placeholder="0.0"
-            className="flex-1 bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2 text-sm"
-          />
-          <select
-            value={inputMint}
-            onChange={(e) => setInputMint(e.target.value)}
-            className="bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2 text-sm w-32"
-          >
-            <option value={COOK_MINT}>{COOK}</option>
-            {tokenOptions
-              .filter((t) => t.mint !== outputMint && t.mint !== COOK_MINT)
-              .map((t) => (
-                <option key={t.mint} value={t.mint}>
-                  {t.symbol}
-                </option>
-              ))}
-          </select>
+      <div className="rounded-xl border border-neutral-800 bg-neutral-900 divide-y divide-neutral-800">
+        <div className="p-4 space-y-1.5">
+          <label className="block text-xs text-neutral-500">You pay</label>
+          <div className="flex gap-2">
+            <input
+              type="number"
+              min="0"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              placeholder="0.0"
+              className="flex-1 bg-transparent text-2xl font-medium outline-none min-w-0"
+            />
+            <select
+              value={inputMint}
+              onChange={(e) => setInputMint(e.target.value)}
+              className="bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-1.5 text-sm shrink-0"
+            >
+              <option value={COOK_MINT}>{COOK}</option>
+              {tokenOptions
+                .filter((t) => t.mint !== outputMint && t.mint !== COOK_MINT)
+                .map((t) => (
+                  <option key={t.mint} value={t.mint}>
+                    {t.symbol}
+                  </option>
+                ))}
+            </select>
+          </div>
         </div>
-      </div>
 
-      <div className="space-y-2">
-        <label className="block text-xs text-neutral-500">You receive</label>
-        <div className="flex gap-2">
-          <input
-            readOnly
-            value={quoting ? '…' : expectedOut ?? ''}
-            placeholder="0.0"
-            className="flex-1 bg-neutral-800/50 border border-neutral-700 rounded-lg px-3 py-2 text-sm text-neutral-300"
-          />
-          <select
-            value={outputMint}
-            onChange={(e) => setOutputMint(e.target.value)}
-            className="bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2 text-sm w-32"
-          >
-            <option value="">Select token</option>
-            {tokenOptions
-              .filter((t) => t.mint !== inputMint)
-              .map((t) => (
-                <option key={t.mint} value={t.mint}>
-                  {t.symbol}
-                </option>
-              ))}
-          </select>
+        <div className="p-4 space-y-1.5">
+          <label className="block text-xs text-neutral-500">You receive</label>
+          <div className="flex gap-2">
+            <div className="flex-1 text-2xl font-medium text-neutral-300 min-w-0 truncate">
+              {quoting ? '…' : expectedOut ?? '0.0'}
+            </div>
+            <select
+              value={outputMint}
+              onChange={(e) => setOutputMint(e.target.value)}
+              className="bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-1.5 text-sm shrink-0"
+            >
+              <option value="">Select token</option>
+              {tokenOptions
+                .filter((t) => t.mint !== inputMint)
+                .map((t) => (
+                  <option key={t.mint} value={t.mint}>
+                    {t.symbol}
+                  </option>
+                ))}
+            </select>
+          </div>
         </div>
       </div>
 
       {route && !quoting && (
-        <div className="text-xs text-neutral-500 space-y-1 border-t border-neutral-800 pt-3">
+        <div className="text-xs text-neutral-500 space-y-1.5 px-1">
           <div className="flex justify-between">
             <span>Price impact</span>
-            <span className={route.combinedPriceImpactPct > 3 ? 'text-amber-400' : ''}>
-              {route.combinedPriceImpactPct.toFixed(2)}%
-            </span>
+            <span className={route.priceImpactPct > 3 ? 'text-amber-400' : ''}>{route.priceImpactPct.toFixed(2)}%</span>
           </div>
           <div className="flex justify-between">
             <span>Minimum received</span>
@@ -186,13 +183,12 @@ export function SwapCard({ initialOutputMint = '' }: { initialOutputMint?: strin
           </div>
           <div className="flex justify-between">
             <span>Route</span>
-            <span>{[...new Set(route.segments.map((s) => s.programName ?? s.dex))].join(' → ') || '—'}</span>
+            <span>{[...new Set(route.segments.map((s) => s.venue))].join(' → ') || '—'}</span>
           </div>
-          {route.lowLiquidity && <div className="text-amber-400">Low liquidity for this pair — expect higher slippage.</div>}
         </div>
       )}
 
-      {quoteError && <p className="text-xs text-red-400">{quoteError}</p>}
+      {quoteError && <p className="text-xs text-red-400 px-1">{quoteError}</p>}
 
       {!publicKey ? (
         <p className="text-sm text-neutral-500 text-center py-2">Connect a wallet to swap.</p>
@@ -200,21 +196,21 @@ export function SwapCard({ initialOutputMint = '' }: { initialOutputMint?: strin
         <button
           disabled={!route || quoting || stage !== null}
           onClick={handleSwap}
-          className="w-full rounded-lg bg-amber-400 text-neutral-950 font-semibold py-2.5 text-sm hover:bg-amber-300 disabled:opacity-40 disabled:cursor-not-allowed"
+          className="w-full rounded-xl bg-amber-400 text-neutral-950 font-semibold py-3 text-sm hover:bg-amber-300 disabled:opacity-40 disabled:cursor-not-allowed"
         >
-          {stage ? STAGE_LABEL[stage] : 'Swap'}
+          {stage ? STAGE_LABEL[stage] ?? 'Working…' : 'Swap'}
         </button>
       )}
 
       {result && (
-        <div className={`text-sm rounded-lg p-3 ${result.confirmed ? 'bg-emerald-950 text-emerald-300' : 'bg-amber-950 text-amber-300'}`}>
-          {result.confirmed ? 'Swap confirmed. ' : 'Submitted, not yet confirmed — check the link below. '}
+        <div className="text-sm rounded-lg p-3 bg-emerald-950 text-emerald-300">
+          Swap confirmed.{' '}
           <a href={txUrl(result.signature)} target="_blank" rel="noreferrer" className="underline">
             View on Cookiescan ↗
           </a>
         </div>
       )}
-      {swapError && <p className="text-sm text-red-400">{swapError}</p>}
-    </section>
+      {swapError && <p className="text-sm text-red-400 px-1">{swapError}</p>}
+    </div>
   )
 }
