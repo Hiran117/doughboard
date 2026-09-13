@@ -4,11 +4,14 @@ import { SwapCard } from './components/SwapCard'
 import { usePortfolio } from './lib/portfolio'
 import { fmtAmount, fmtUsd, shortAddr } from './lib/format'
 import { addressUrl } from './lib/chain'
+import { useState } from 'react'
+import { MarketsCard } from './components/MarketsCard'
 
 function App() {
   const { publicKey, connected } = useWallet()
   const { connection } = useConnection()
   const { rows, totalUsd, loading, error } = usePortfolio(connection, publicKey)
+  const [marketPick, setMarketPick] = useState<string | null>(null)
 
   return (
     <div className="min-h-screen bg-neutral-950 text-neutral-100 p-6">
@@ -86,14 +89,9 @@ function App() {
           </section>
         )}
 
-        {connected && <SwapCard />}
+<MarketsCard onPick={setMarketPick} />
 
-        <section className="rounded-xl border border-neutral-800 p-6 bg-neutral-900">
-          <h2 className="text-lg font-semibold mb-2">Next up</h2>
-          <ul className="list-disc list-inside text-sm text-neutral-400 space-y-1">
-            <li>Price/volume analytics charts</li>
-          </ul>
-        </section>
+{connected && <SwapCard key={marketPick ?? 'default'} initialOutputMint={marketPick ?? ''} />}
       </main>
     </div>
   )

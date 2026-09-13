@@ -15,13 +15,13 @@ const STAGE_LABEL: Record<SwapStage, string> = {
   failed: 'Failed',
 }
 
-export function SwapCard() {
+export function SwapCard({ initialOutputMint = '' }: { initialOutputMint?: string }) {
   const { publicKey, signTransaction } = useWallet()
   const { connection } = useConnection()
 
   const [registry, setRegistry] = useState<Map<string, TokenInfo> | null>(null)
   const [inputMint, setInputMint] = useState(COOK_MINT)
-  const [outputMint, setOutputMint] = useState('')
+const [outputMint, setOutputMint] = useState(initialOutputMint)
   const [amount, setAmount] = useState('')
   const [slippageBps, setSlippageBps] = useState(DEFAULT_SLIPPAGE_BPS)
 
