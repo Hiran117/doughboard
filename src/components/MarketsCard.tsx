@@ -35,12 +35,12 @@ export function MarketsCard({ onPick }: { onPick: (mint: string) => void }) {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search token…"
-          className="bg-neutral-900 border border-neutral-800 rounded-lg px-3 py-2 text-sm flex-1 min-w-0"
+          className="glass rounded-xl px-4 py-2.5 text-sm outline-none transition focus:border-amber-400/60 focus:shadow-[0_0_18px_rgba(245,158,11,.15)] flex-1 min-w-0"
         />
         <select
           value={sortKey}
           onChange={(e) => setSortKey(e.target.value as SortKey)}
-          className="bg-neutral-900 border border-neutral-800 rounded-lg text-xs px-2 py-2"
+          className="glass rounded-full text-xs px-3 py-2.5 text-dough-muted outline-none transition hover:border-amber-400/50"
         >
           <option value="marketCap">Market cap</option>
           <option value="liquidity">Liquidity</option>
@@ -50,19 +50,17 @@ export function MarketsCard({ onPick }: { onPick: (mint: string) => void }) {
 
       {error && <p className="text-sm text-red-400">Couldn't load markets: {error}</p>}
       {!tokens && !error && (
-        <div className="rounded-xl border border-neutral-800 bg-neutral-900 p-8 text-center text-sm text-neutral-500">
-          Loading markets…
-        </div>
+        <div className="glass rounded-2xl p-8 text-center text-sm text-dough-muted">Loading markets…</div>
       )}
-      {tokens && rows.length === 0 && <p className="text-sm text-neutral-500">No tokens match.</p>}
+      {tokens && rows.length === 0 && <p className="text-sm text-dough-muted">No tokens match.</p>}
 
       {rows.length > 0 && (
-        <div className="rounded-xl border border-neutral-800 bg-neutral-900 overflow-hidden">
+        <div className="glass rounded-2xl overflow-hidden shadow-[0_0_40px_rgba(245,158,11,.06)]">
           {rows.map((t, i) => (
             <div
               key={t.mint}
               onClick={() => onPick(t.mint)}
-              className={`flex items-center justify-between px-4 py-3 cursor-pointer hover:bg-neutral-800/60 ${i > 0 ? 'border-t border-neutral-800' : ''}`}
+              className={`flex items-center justify-between px-4 py-3 cursor-pointer transition hover:bg-amber-400/5 ${i > 0 ? 'border-t border-dough-border/50' : ''}`}
             >
               <div className="flex items-center gap-3 min-w-0">
                 {t.logo ? (
@@ -73,18 +71,18 @@ export function MarketsCard({ onPick }: { onPick: (mint: string) => void }) {
                     onError={(e) => (e.currentTarget.style.display = 'none')}
                   />
                 ) : (
-                  <div className="w-8 h-8 rounded-full bg-neutral-800 shrink-0 flex items-center justify-center text-xs text-neutral-500">
+                  <div className="w-8 h-8 rounded-full bg-amber-400/10 shrink-0 flex items-center justify-center text-xs text-amber-300/70">
                     {t.symbol.slice(0, 1)}
                   </div>
                 )}
                 <div className="min-w-0">
                   <div className="font-medium truncate">{t.symbol}</div>
-                  <div className="text-xs text-neutral-500 truncate max-w-[10rem]">{t.name}</div>
+                  <div className="text-xs text-dough-muted truncate max-w-40">{t.name}</div>
                 </div>
               </div>
               <div className="text-right shrink-0">
                 <div className="font-medium">{fmtUsd(t.priceUsd)}</div>
-                <div className={`text-xs ${t.change24h === undefined ? 'text-neutral-500' : t.change24h >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                <div className={`text-xs ${t.change24h === undefined ? 'text-dough-muted' : t.change24h >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
                   {t.change24h === undefined ? '—' : `${t.change24h >= 0 ? '+' : ''}${t.change24h.toFixed(1)}%`}
                 </div>
               </div>

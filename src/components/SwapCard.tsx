@@ -108,7 +108,7 @@ export function SwapCard({ initialOutputMint = '' }: { initialOutputMint?: strin
         <select
           value={slippageBps}
           onChange={(e) => setSlippageBps(Number(e.target.value))}
-          className="bg-neutral-900 border border-neutral-800 rounded-lg text-xs px-2 py-1.5"
+          className="glass rounded-full text-xs px-3 py-1.5 text-dough-muted outline-none transition hover:border-amber-400/50"
         >
           <option value={50}>0.5% slippage</option>
           <option value={100}>1% slippage</option>
@@ -116,9 +116,9 @@ export function SwapCard({ initialOutputMint = '' }: { initialOutputMint?: strin
         </select>
       </div>
 
-      <div className="rounded-xl border border-neutral-800 bg-neutral-900 divide-y divide-neutral-800">
+      <div className="glass rounded-2xl divide-y divide-dough-border/60 shadow-[0_0_40px_rgba(245,158,11,.06)]">
         <div className="p-4 space-y-1.5">
-          <label className="block text-xs text-neutral-500">You pay</label>
+          <label className="block text-xs text-dough-muted">You pay</label>
           <div className="flex gap-2">
             <input
               type="number"
@@ -126,12 +126,12 @@ export function SwapCard({ initialOutputMint = '' }: { initialOutputMint?: strin
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               placeholder="0.0"
-              className="flex-1 bg-transparent text-2xl font-medium outline-none min-w-0"
+              className="flex-1 bg-transparent text-2xl font-medium text-dough-text outline-none min-w-0"
             />
             <select
               value={inputMint}
               onChange={(e) => setInputMint(e.target.value)}
-              className="bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-1.5 text-sm shrink-0"
+              className="rounded-xl border border-amber-400/30 bg-amber-400/10 px-3 py-1.5 text-sm text-amber-200 shrink-0 outline-none transition hover:border-amber-400/60"
             >
               <option value={COOK_MINT}>{COOK}</option>
               {tokenOptions
@@ -146,15 +146,15 @@ export function SwapCard({ initialOutputMint = '' }: { initialOutputMint?: strin
         </div>
 
         <div className="p-4 space-y-1.5">
-          <label className="block text-xs text-neutral-500">You receive</label>
+          <label className="block text-xs text-dough-muted">You receive</label>
           <div className="flex gap-2">
-            <div className="flex-1 text-2xl font-medium text-neutral-300 min-w-0 truncate">
+            <div className="flex-1 text-2xl font-medium text-dough-muted min-w-0 truncate">
               {quoting ? '…' : expectedOut ?? '0.0'}
             </div>
             <select
               value={outputMint}
               onChange={(e) => setOutputMint(e.target.value)}
-              className="bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-1.5 text-sm shrink-0"
+              className="rounded-xl border border-amber-400/30 bg-amber-400/10 px-3 py-1.5 text-sm text-amber-200 shrink-0 outline-none transition hover:border-amber-400/60"
             >
               <option value="">Select token</option>
               {tokenOptions
@@ -170,20 +170,22 @@ export function SwapCard({ initialOutputMint = '' }: { initialOutputMint?: strin
       </div>
 
       {route && !quoting && (
-        <div className="text-xs text-neutral-500 space-y-1.5 px-1">
+        <div className="glass rounded-xl px-4 py-3 text-xs text-dough-muted space-y-1.5">
           <div className="flex justify-between">
             <span>Price impact</span>
-            <span className={route.priceImpactPct > 3 ? 'text-amber-400' : ''}>{route.priceImpactPct.toFixed(2)}%</span>
+            <span className={route.priceImpactPct > 3 ? 'text-amber-400' : 'text-dough-text'}>
+              {route.priceImpactPct.toFixed(2)}%
+            </span>
           </div>
           <div className="flex justify-between">
             <span>Minimum received</span>
-            <span>
+            <span className="text-dough-text">
               {minOut} {outputToken?.symbol}
             </span>
           </div>
           <div className="flex justify-between">
             <span>Route</span>
-            <span>{[...new Set(route.segments.map((s) => s.venue))].join(' → ') || '—'}</span>
+            <span className="text-dough-text">{[...new Set(route.segments.map((s) => s.venue))].join(' → ') || '—'}</span>
           </div>
         </div>
       )}
@@ -191,19 +193,19 @@ export function SwapCard({ initialOutputMint = '' }: { initialOutputMint?: strin
       {quoteError && <p className="text-xs text-red-400 px-1">{quoteError}</p>}
 
       {!publicKey ? (
-        <p className="text-sm text-neutral-500 text-center py-2">Connect a wallet to swap.</p>
+        <p className="text-sm text-dough-muted text-center py-2">Connect a wallet to swap.</p>
       ) : (
         <button
           disabled={!route || quoting || stage !== null}
           onClick={handleSwap}
-          className="w-full rounded-xl bg-amber-400 text-neutral-950 font-semibold py-3 text-sm hover:bg-amber-300 disabled:opacity-40 disabled:cursor-not-allowed"
+          className="w-full rounded-2xl bg-linear-to-b from-amber-300 to-amber-500 text-dough-950 font-semibold py-3.5 text-sm shadow-[0_0_30px_rgba(245,158,11,.28)] transition hover:from-amber-200 hover:to-amber-400 disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none"
         >
           {stage ? STAGE_LABEL[stage] ?? 'Working…' : 'Swap'}
         </button>
       )}
 
       {result && (
-        <div className="text-sm rounded-lg p-3 bg-emerald-950 text-emerald-300">
+        <div className="text-sm rounded-xl p-3 border border-emerald-500/30 bg-emerald-500/10 text-emerald-300">
           Swap confirmed.{' '}
           <a href={txUrl(result.signature)} target="_blank" rel="noreferrer" className="underline">
             View on Cookiescan ↗

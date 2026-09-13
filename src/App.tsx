@@ -17,8 +17,8 @@ const TABS: { id: Tab; label: string }[] = [
 
 function ConnectPrompt({ message }: { message: string }) {
   return (
-    <div className="rounded-xl border border-dashed border-neutral-800 bg-neutral-900/50 p-10 text-center">
-      <p className="text-sm text-neutral-400">{message}</p>
+    <div className="glass rounded-2xl border-dashed p-10 text-center">
+      <p className="text-sm text-dough-muted">{message}</p>
     </div>
   )
 }
@@ -69,36 +69,42 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-neutral-100">
-      <header className="border-b border-neutral-900">
+    <div className="min-h-screen flex flex-col">
+      <header className="border-b border-dough-border/50">
         <div className="max-w-2xl mx-auto flex items-center justify-between px-4 py-4">
-          <div className="flex items-center gap-2">
-            <img src="/favicon-doughboard.png" alt="" className="w-7 h-7 rounded-lg" />
+          <div className="flex items-center gap-2.5">
+            <img
+              src="/favicon-doughboard.png"
+              alt=""
+              className="w-8 h-8 rounded-xl ring-1 ring-dough-border shadow-[0_0_18px_rgba(245,158,11,.25)]"
+            />
             <span className="text-lg font-bold tracking-tight">Doughboard</span>
           </div>
           <WalletButton />
         </div>
       </header>
 
-      <nav className="border-b border-neutral-900 sticky top-0 bg-neutral-950/95 backdrop-blur z-10">
-        <div className="max-w-2xl mx-auto flex px-4">
-          {TABS.map((t) => (
-            <button
-              key={t.id}
-              onClick={() => setTab(t.id)}
-              className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
-                tab === t.id
-                  ? 'border-amber-400 text-neutral-100'
-                  : 'border-transparent text-neutral-500 hover:text-neutral-300'
-              }`}
-            >
-              {t.label}
-            </button>
-          ))}
+      <nav className="sticky top-0 z-10 border-b border-dough-border/30 bg-dough-950/70 backdrop-blur-xl">
+        <div className="max-w-2xl mx-auto px-4 py-3">
+          <div className="glass flex gap-1 rounded-full p-1">
+            {TABS.map((t) => (
+              <button
+                key={t.id}
+                onClick={() => setTab(t.id)}
+                className={`flex-1 rounded-full px-4 py-2 text-sm font-medium transition-all ${
+                  tab === t.id
+                    ? 'bg-amber-400 text-dough-950 shadow-[0_0_20px_rgba(245,158,11,.35)]'
+                    : 'text-dough-muted hover:bg-amber-400/10 hover:text-amber-200'
+                }`}
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
         </div>
       </nav>
 
-      <main className="max-w-2xl mx-auto px-4 py-6">
+      <main className="max-w-2xl w-full mx-auto px-4 py-6 flex-1">
         {tab === 'portfolio' && (
           <div className="space-y-4">
             <div className="flex gap-2">
@@ -107,17 +113,20 @@ function App() {
                 onChange={(e) => setViewInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleView()}
                 placeholder="Paste any wallet address to view its portfolio…"
-                className="flex-1 bg-neutral-900 border border-neutral-800 rounded-lg px-3 py-2 text-sm font-mono min-w-0"
+                className="glass flex-1 rounded-xl px-4 py-2.5 text-sm font-mono outline-none transition focus:border-amber-400/60 focus:shadow-[0_0_18px_rgba(245,158,11,.15)] min-w-0"
               />
               <button
                 onClick={handleView}
                 disabled={!isPubkey(viewInput.trim())}
-                className="shrink-0 rounded-lg bg-neutral-800 px-3 py-2 text-sm hover:bg-neutral-700 disabled:opacity-40"
+                className="shrink-0 rounded-xl bg-amber-400 px-4 py-2.5 text-sm font-semibold text-dough-950 shadow-[0_0_20px_rgba(245,158,11,.25)] transition hover:bg-amber-300 disabled:opacity-40 disabled:shadow-none"
               >
                 View
               </button>
               {connected && !isOwnWallet && (
-                <button onClick={handleViewOwn} className="shrink-0 rounded-lg bg-neutral-800 px-3 py-2 text-sm hover:bg-neutral-700">
+                <button
+                  onClick={handleViewOwn}
+                  className="glass shrink-0 rounded-xl px-4 py-2.5 text-sm text-amber-200 transition hover:border-amber-400/60 hover:shadow-[0_0_18px_rgba(245,158,11,.15)]"
+                >
                   My wallet
                 </button>
               )}
@@ -147,6 +156,30 @@ function App() {
             <ConnectPrompt message="Connect a wallet (Nightly supported) to swap." />
           ))}
       </main>
+
+      <footer className="border-t border-dough-border/40">
+        <div className="max-w-2xl mx-auto px-4 py-6 flex items-center justify-between text-xs text-dough-muted">
+          <span className="font-semibold text-amber-300/80">Doughboard</span>
+          <div className="flex gap-5">
+            <a
+              href="https://cookiescan.io"
+              target="_blank"
+              rel="noreferrer"
+              className="transition hover:text-amber-200"
+            >
+              Cookiescan ↗
+            </a>
+            <a
+              href="https://hyperlane.cookiescan.io"
+              target="_blank"
+              rel="noreferrer"
+              className="transition hover:text-amber-200"
+            >
+              Bridge ↗
+            </a>
+          </div>
+        </div>
+      </footer>
     </div>
   )
 }

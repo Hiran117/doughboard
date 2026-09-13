@@ -30,7 +30,7 @@ export function WalletButton() {
     const load = () =>
       connection
         .getBalance(publicKey)
-        .then((b) => !stop && setBalance(BigInt(b)))
+        .then((b) => !stop && setBalance(b))
         .catch(() => {})
     load()
     const id = setInterval(load, 15_000)
@@ -49,16 +49,16 @@ export function WalletButton() {
       <div className="relative" ref={ref}>
         <button
           onClick={() => setOpen((o) => !o)}
-          className="flex items-center gap-2 rounded-lg border border-neutral-700 bg-neutral-900 px-3 py-2 text-sm hover:border-neutral-500"
+          className="glass flex items-center gap-2 rounded-xl px-3 py-2 text-sm transition hover:border-amber-400/60 hover:shadow-[0_0_16px_rgba(245,158,11,.18)]"
         >
           {wallet?.adapter.icon && <img src={wallet.adapter.icon} alt="" width={18} height={18} className="rounded" />}
-          <span className="font-mono">{shortAddr(publicKey.toBase58())}</span>
-          {balance !== null && <span className="text-neutral-400">{fmtAmount(balance, COOK_DECIMALS, true)} COOK</span>}
+          <span className="font-mono text-amber-100">{shortAddr(publicKey.toBase58())}</span>
+          {balance !== null && <span className="text-dough-muted">{fmtAmount(balance, COOK_DECIMALS, true)} COOK</span>}
         </button>
         {open && (
-          <div className="absolute right-0 mt-1 w-52 rounded-lg border border-neutral-700 bg-neutral-900 p-1 text-sm shadow-lg">
+          <div className="glass absolute right-0 mt-2 w-52 rounded-xl p-1.5 text-sm shadow-2xl shadow-black/60">
             <button
-              className="w-full rounded px-3 py-2 text-left hover:bg-neutral-800"
+              className="w-full rounded-lg px-3 py-2 text-left transition hover:bg-amber-400/10 hover:text-amber-200"
               onClick={() => {
                 navigator.clipboard.writeText(publicKey.toBase58())
                 setOpen(false)
@@ -67,13 +67,13 @@ export function WalletButton() {
               Copy address
             </button>
             <button
-              className="w-full rounded px-3 py-2 text-left hover:bg-neutral-800"
+              className="w-full rounded-lg px-3 py-2 text-left transition hover:bg-amber-400/10 hover:text-amber-200"
               onClick={() => window.open(addressUrl(publicKey.toBase58()), '_blank')}
             >
               View on Cookiescan
             </button>
             <button
-              className="w-full rounded px-3 py-2 text-left text-red-400 hover:bg-neutral-800"
+              className="w-full rounded-lg px-3 py-2 text-left text-red-400 transition hover:bg-red-400/10"
               onClick={() => {
                 disconnect()
                 setOpen(false)
@@ -92,15 +92,15 @@ export function WalletButton() {
       <button
         disabled={connecting}
         onClick={() => setOpen((o) => !o)}
-        className="rounded-lg bg-amber-400 px-4 py-2 text-sm font-semibold text-neutral-950 hover:bg-amber-300 disabled:opacity-60"
+        className="rounded-xl border border-amber-400/70 bg-amber-400/10 px-4 py-2 text-sm font-semibold text-amber-300 shadow-[0_0_22px_rgba(245,158,11,.22)] transition hover:bg-amber-400/20 hover:shadow-[0_0_30px_rgba(245,158,11,.35)] disabled:opacity-60"
       >
         {connecting ? 'Connecting…' : 'Connect wallet'}
       </button>
       {open && (
-        <div className="absolute right-0 mt-1 w-56 rounded-lg border border-neutral-700 bg-neutral-900 p-1 text-sm shadow-lg">
+        <div className="glass absolute right-0 mt-2 w-56 rounded-xl p-1.5 text-sm shadow-2xl shadow-black/60">
           {installed.length === 0 && (
             <button
-              className="w-full rounded px-3 py-2 text-left hover:bg-neutral-800"
+              className="w-full rounded-lg px-3 py-2 text-left transition hover:bg-amber-400/10 hover:text-amber-200"
               onClick={() => window.open('https://nightly.app', '_blank')}
             >
               No wallet found — install Nightly
@@ -109,7 +109,7 @@ export function WalletButton() {
           {installed.map((w) => (
             <button
               key={w.adapter.name}
-              className="flex w-full items-center gap-2 rounded px-3 py-2 text-left hover:bg-neutral-800"
+              className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left transition hover:bg-amber-400/10 hover:text-amber-200"
               onClick={async () => {
                 setOpen(false)
                 select(w.adapter.name)
