@@ -27,11 +27,11 @@ export function WalletButton() {
       return
     }
     let stop = false
-    const load = () =>
-      connection
-        .getBalance(publicKey)
-        .then((b) => !stop && setBalance(b))
-        .catch(() => {})
+const load = () =>
+  connection
+    .getBalance(publicKey)
+    .then((b) => !stop && setBalance(BigInt(b)))
+    .catch(() => {})
     load()
     const id = setInterval(load, 15_000)
     return () => {
