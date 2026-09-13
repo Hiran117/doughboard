@@ -81,10 +81,17 @@ export function MarketsCard({ onPick }: { onPick: (mint: string) => void }) {
                 className="border-b border-neutral-900 cursor-pointer hover:bg-neutral-800/60"
               >
                 <td className="py-2.5 flex items-center gap-2">
-                  {t.logo && <img src={t.logo} alt="" className="w-5 h-5 rounded-full" />}
+                  {t.logo && (
+                    <img
+                      src={t.logo}
+                      alt=""
+                      className="w-5 h-5 rounded-full"
+                      onError={(e) => (e.currentTarget.style.display = 'none')}
+                    />
+                  )}
                   <div>
                     <div className="font-medium">{t.symbol}</div>
-                    <div className="text-xs text-neutral-500 truncate max-w-[10rem]">{t.name}</div>
+                    <div className="text-xs text-neutral-500 truncate max-w-40">{t.name}</div>
                   </div>
                 </td>
                 <td className="py-2.5 text-right">{fmtUsd(t.priceUsd)}</td>

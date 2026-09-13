@@ -1,10 +1,10 @@
-// Candy Shop aggregator (swap.cookiescan.io/api) — routes across all Cookie Chain DEX liquidity.
-// Reference flow adapted from the official cookie-mcp implementation (github.com/cookiechain/cookie-mcp,
-// src/core/candyshop.ts + trade.ts), swapped from a local Keypair to browser wallet signing.
-// Flow: quote -> buildSwapTx -> wallet signs -> submitSignedTx -> confirmTx (poll if not immediate).
 import { VersionedTransaction, Transaction, type Connection } from '@solana/web3.js'
 
-export const CANDY_SHOP_API_URL = 'https://swap.cookiescan.io/api'
+export const CANDY_SHOP_API_URL = '/api/candyshop'
+// Direct upstream, kept for reference — blocked by CORS from the browser (no
+// Access-Control-Allow-Origin on swap.cookiescan.io), which is why we proxy through
+// our own /api/candyshop serverless function instead.
+// const CANDY_SHOP_UPSTREAM = 'https://swap.cookiescan.io/api'
 export const DEFAULT_SLIPPAGE_BPS = 500 // 5% — matches cookie-mcp's tuned default for this chain's liquidity
 
 export interface RouteSegment {

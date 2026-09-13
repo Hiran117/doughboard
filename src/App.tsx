@@ -1,11 +1,11 @@
+import { useState } from 'react'
 import { useConnection, useWallet } from '@solana/wallet-adapter-react'
 import { WalletButton } from './components/WalletButton'
 import { SwapCard } from './components/SwapCard'
+import { MarketsCard } from './components/MarketsCard'
 import { usePortfolio } from './lib/portfolio'
 import { fmtAmount, fmtUsd, shortAddr } from './lib/format'
 import { addressUrl } from './lib/chain'
-import { useState } from 'react'
-import { MarketsCard } from './components/MarketsCard'
 
 function App() {
   const { publicKey, connected } = useWallet()
@@ -16,7 +16,7 @@ function App() {
   return (
     <div className="min-h-screen bg-neutral-950 text-neutral-100 p-6">
       <header className="flex items-center justify-between max-w-5xl mx-auto mb-10">
-<h1 className="text-2xl font-bold tracking-tight">🍪 Doughboard</h1>
+        <h1 className="text-2xl font-bold tracking-tight">🍪 Doughboard</h1>
         <WalletButton />
       </header>
 
@@ -72,7 +72,14 @@ function App() {
                   {rows.map((r) => (
                     <tr key={r.mint} className="border-b border-neutral-900">
                       <td className="py-2.5 flex items-center gap-2">
-                        {r.logo && <img src={r.logo} alt="" className="w-5 h-5 rounded-full" />}
+                        {r.logo && (
+                          <img
+                            src={r.logo}
+                            alt=""
+                            className="w-5 h-5 rounded-full"
+                            onError={(e) => (e.currentTarget.style.display = 'none')}
+                          />
+                        )}
                         <div>
                           <div className="font-medium">{r.symbol}</div>
                           <div className="text-xs text-neutral-500">{r.name}</div>
@@ -89,9 +96,9 @@ function App() {
           </section>
         )}
 
-<MarketsCard onPick={setMarketPick} />
+        <MarketsCard onPick={setMarketPick} />
 
-{connected && <SwapCard key={marketPick ?? 'default'} initialOutputMint={marketPick ?? ''} />}
+        {connected && <SwapCard key={marketPick ?? 'default'} initialOutputMint={marketPick ?? ''} />}
       </main>
     </div>
   )

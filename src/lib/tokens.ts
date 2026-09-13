@@ -32,6 +32,16 @@ interface RegistryRow {
 const num = (v: unknown): number | undefined =>
   v === null || v === undefined || v === '' ? undefined : Number.isFinite(Number(v)) ? Number(v) : undefined
 
+const CID_RE = /^(Qm[1-9A-HJ-NP-Za-km-z]{44}|bafy[a-z0-9]+)(\/.*)?$/
+
+function resolveLogo(uri: string | undefined): string | undefined {
+  if (!uri) return undefined
+  if (uri.startsWith('http://') || uri.startsWith('https://')) return uri
+  if (uri.startsWith('ipfs://')) return `https://ipfs.io/ipfs/${uri.slice('ipfs://'.length)}`
+  if (CID_RE.test(uri)) return `https://ipfs.io/ipfs/${uri}`
+  return undefined
+}
+
 let cache: Promise<Map<string, TokenInfo>> | null = null
 
 /** The Cookiescan token registry: metadata + live price/market data, one fetch per session. */
@@ -48,7 +58,7 @@ export function loadRegistry(): Promise<Map<string, TokenInfo>> {
             symbol: r.symbol ?? '',
             name: r.name ?? '',
             decimals: r.decimals ?? 9,
-            logo: r.logoUri || undefined,
+            logo: resolveLogo(r.logoUri),
             holderCount: r.holderCount,
             verified: r.verified,
             priceUsd: num(r.price),
