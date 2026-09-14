@@ -12,7 +12,7 @@ export function PortfolioView({ connection, publicKey }: { connection: Connectio
       <div className="glass rounded-2xl px-5 py-4 flex items-end justify-between shadow-[0_0_40px_rgba(245,158,11,.06)]">
         <div>
           <div className="text-xs uppercase tracking-wider text-dough-muted">Total portfolio value</div>
-          <div className="text-3xl font-semibold tracking-tight mt-1">
+          <div className="text-3xl font-semibold font-mono tabular-nums tracking-tight mt-1">
             {totalUsd !== undefined ? fmtUsd(totalUsd) : loading ? '…' : '—'}
           </div>
         </div>
@@ -48,7 +48,7 @@ export function PortfolioView({ connection, publicKey }: { connection: Connectio
           {rows.map((r, i) => (
             <div
               key={r.mint}
-              className={`flex items-center justify-between px-4 py-3 ${i > 0 ? 'border-t border-dough-border/50' : ''}`}
+              className={`flex items-center justify-between px-4 py-2.5 ${i > 0 ? 'border-t border-dough-border/50' : ''}`}
             >
               <div className="flex items-center gap-3 min-w-0">
                 {r.logo ? (
@@ -65,12 +65,12 @@ export function PortfolioView({ connection, publicKey }: { connection: Connectio
                 )}
                 <div className="min-w-0">
                   <div className="font-medium truncate">{r.symbol}</div>
-                  <div className="text-xs text-dough-muted truncate">{fmtAmount(r.amount, r.decimals, true)}</div>
+                  <div className="text-xs text-dough-muted font-mono tabular-nums truncate">{fmtAmount(r.amount, r.decimals, true)}</div>
                 </div>
               </div>
               <div className="text-right shrink-0">
-                <div className="font-medium">{r.valueUsd !== undefined ? fmtUsd(r.valueUsd) : '—'}</div>
-                <div className="text-xs text-dough-muted">{fmtUsd(r.priceUsd)}</div>
+                <div className="font-medium font-mono tabular-nums">{r.valueUsd !== undefined ? fmtUsd(r.valueUsd) : '—'}</div>
+                <div className="text-xs text-dough-muted font-mono tabular-nums">{fmtUsd(r.priceUsd)}</div>
               </div>
             </div>
           ))}

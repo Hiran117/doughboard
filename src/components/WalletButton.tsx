@@ -27,11 +27,11 @@ export function WalletButton() {
       return
     }
     let stop = false
-const load = () =>
-  connection
-    .getBalance(publicKey)
-    .then((b) => !stop && setBalance(BigInt(b)))
-    .catch(() => {})
+    const load = () =>
+      connection
+        .getBalance(publicKey)
+        .then((b) => !stop && setBalance(BigInt(b)))
+        .catch(() => {})
     load()
     const id = setInterval(load, 15_000)
     return () => {
@@ -53,7 +53,7 @@ const load = () =>
         >
           {wallet?.adapter.icon && <img src={wallet.adapter.icon} alt="" width={18} height={18} className="rounded" />}
           <span className="font-mono text-amber-100">{shortAddr(publicKey.toBase58())}</span>
-          {balance !== null && <span className="text-dough-muted">{fmtAmount(balance, COOK_DECIMALS, true)} COOK</span>}
+          {balance !== null && <span className="text-dough-muted font-mono tabular-nums">{fmtAmount(balance, COOK_DECIMALS, true)} COOK</span>}
         </button>
         {open && (
           <div className="glass absolute right-0 mt-2 w-52 rounded-xl p-1.5 text-sm shadow-2xl shadow-black/60">

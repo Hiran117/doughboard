@@ -40,3 +40,18 @@ select option {
   background-color: #1f1813;
   color: #f5f0e8;
 }
+
+@keyframes pulse-dot {
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 0 0 8px rgba(52, 211, 153, 0.6);
+  }
+  50% {
+    opacity: 0.4;
+    box-shadow: 0 0 2px rgba(52, 211, 153, 0.2);
+  }
+}
+
+.pulse-dot {
+  animation: pulse-dot 2s ease-in-out infinite;
+}

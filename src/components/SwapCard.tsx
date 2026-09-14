@@ -126,12 +126,12 @@ export function SwapCard({ initialOutputMint = '' }: { initialOutputMint?: strin
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               placeholder="0.0"
-              className="flex-1 bg-transparent text-2xl font-medium text-dough-text outline-none min-w-0"
+              className="flex-1 bg-transparent text-2xl font-medium font-mono tabular-nums text-dough-text outline-none min-w-0"
             />
             <select
               value={inputMint}
               onChange={(e) => setInputMint(e.target.value)}
-className="rounded-xl border border-amber-400/40 bg-dough-surface px-3 py-1.5 text-sm text-amber-200 shrink-0 outline-none transition hover:border-amber-400/70"
+              className="rounded-xl border border-amber-400/40 bg-dough-surface px-3 py-1.5 text-sm text-amber-200 shrink-0 outline-none transition hover:border-amber-400/70"
             >
               <option value={COOK_MINT}>{COOK}</option>
               {tokenOptions
@@ -148,13 +148,13 @@ className="rounded-xl border border-amber-400/40 bg-dough-surface px-3 py-1.5 te
         <div className="p-4 space-y-1.5">
           <label className="block text-xs text-dough-muted">You receive</label>
           <div className="flex gap-2">
-            <div className="flex-1 text-2xl font-medium text-dough-muted min-w-0 truncate">
+            <div className="flex-1 text-2xl font-medium font-mono tabular-nums text-dough-muted min-w-0 truncate">
               {quoting ? '…' : expectedOut ?? '0.0'}
             </div>
             <select
               value={outputMint}
               onChange={(e) => setOutputMint(e.target.value)}
-className="rounded-xl border border-amber-400/40 bg-dough-surface px-3 py-1.5 text-sm text-amber-200 shrink-0 outline-none transition hover:border-amber-400/70"
+              className="rounded-xl border border-amber-400/40 bg-dough-surface px-3 py-1.5 text-sm text-amber-200 shrink-0 outline-none transition hover:border-amber-400/70"
             >
               <option value="">Select token</option>
               {tokenOptions
@@ -173,19 +173,19 @@ className="rounded-xl border border-amber-400/40 bg-dough-surface px-3 py-1.5 te
         <div className="glass rounded-xl px-4 py-3 text-xs text-dough-muted space-y-1.5">
           <div className="flex justify-between">
             <span>Price impact</span>
-            <span className={route.priceImpactPct > 3 ? 'text-amber-400' : 'text-dough-text'}>
+            <span className={`font-mono tabular-nums ${route.priceImpactPct > 3 ? 'text-amber-400' : 'text-dough-text'}`}>
               {route.priceImpactPct.toFixed(2)}%
             </span>
           </div>
           <div className="flex justify-between">
             <span>Minimum received</span>
-            <span className="text-dough-text">
+            <span className="text-dough-text font-mono tabular-nums">
               {minOut} {outputToken?.symbol}
             </span>
           </div>
           <div className="flex justify-between">
             <span>Route</span>
-            <span className="text-dough-text">{[...new Set(route.segments.map((s) => s.venue))].join(' → ') || '—'}</span>
+            <span className="text-dough-text font-mono tabular-nums">{[...new Set(route.segments.map((s) => s.venue))].join(' → ') || '—'}</span>
           </div>
         </div>
       )}

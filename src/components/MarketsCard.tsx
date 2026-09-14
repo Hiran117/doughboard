@@ -60,7 +60,7 @@ export function MarketsCard({ onPick }: { onPick: (mint: string) => void }) {
             <div
               key={t.mint}
               onClick={() => onPick(t.mint)}
-              className={`flex items-center justify-between px-4 py-3 cursor-pointer transition hover:bg-amber-400/5 ${i > 0 ? 'border-t border-dough-border/50' : ''}`}
+              className={`flex items-center justify-between px-4 py-2.5 cursor-pointer transition hover:bg-amber-400/5 ${i > 0 ? 'border-t border-dough-border/50' : ''}`}
             >
               <div className="flex items-center gap-3 min-w-0">
                 {t.logo ? (
@@ -81,8 +81,8 @@ export function MarketsCard({ onPick }: { onPick: (mint: string) => void }) {
                 </div>
               </div>
               <div className="text-right shrink-0">
-                <div className="font-medium">{fmtUsd(t.priceUsd)}</div>
-                <div className={`text-xs ${t.change24h === undefined ? 'text-dough-muted' : t.change24h >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                <div className="font-medium font-mono tabular-nums">{fmtUsd(t.priceUsd)}</div>
+                <div className={`text-xs font-mono tabular-nums ${t.change24h === undefined ? 'text-dough-muted' : t.change24h >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
                   {t.change24h === undefined ? '—' : `${t.change24h >= 0 ? '+' : ''}${t.change24h.toFixed(1)}%`}
                 </div>
               </div>

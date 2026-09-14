@@ -5,6 +5,7 @@ import { WalletButton } from './components/WalletButton'
 import { SwapCard } from './components/SwapCard'
 import { MarketsCard } from './components/MarketsCard'
 import { PortfolioView } from './components/PortfolioView'
+import { StatsStrip } from './components/StatsStrip'
 import { isPubkey } from './lib/chain'
 
 type Tab = 'portfolio' | 'markets' | 'swap'
@@ -70,7 +71,7 @@ function App() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="border-b border-dough-border/50">
+      <header className="relative z-30 border-b border-dough-border/50">
         <div className="max-w-2xl mx-auto flex items-center justify-between px-4 py-4">
           <div className="flex items-center gap-2.5">
             <img
@@ -83,6 +84,8 @@ function App() {
           <WalletButton />
         </div>
       </header>
+
+      <StatsStrip />
 
       <nav className="sticky top-0 z-10 border-b border-dough-border/30 bg-dough-950/70 backdrop-blur-xl">
         <div className="max-w-2xl mx-auto px-4 py-3">
